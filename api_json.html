@@ -1,0 +1,123 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>EONET How-to</title>
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- OpenLayers -->
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/build/ol.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
+    <style>
+        .selections {
+            width: 600px;
+            float: left;
+        }
+        .map {
+            height: 400px;
+            width: 400px;
+            float: left;
+        }
+    </style>
+
+</head>
+<body>
+
+    <?php 
+        $lon = 
+        $lat = 
+        $zoom = 
+        echo $xtile = floor((($lon + 180) / 360) * pow(2, $zoom));
+        echo "<br>";
+        echo $ytile = floor((1 - log(tan(deg2rad($lat)) + 1 / cos(deg2rad($lat))) / pi()) /2 * pow(2, $zoom));
+
+        /*
+         40.45994
+        api_json.html:82 -122.60318 -2.139829164415261 1.5634652330671706 -1.8559158211001334 -1.2294595563823083 1024 -0.29245058803296287
+        api_json.html:58 0 313
+
+        */
+        
+    ?>
+<div id="selections" class="selections">
+    <h2>EONET How-to<span id="eventTitle"></span></h2>
+    <div id="eventSelect"><dl id="eventList"></dl></div>
+    <div id="layerSelect"><dl id="layerList"></dl></div>
+</div>
+<div id="map" class="map"></div>
+
+<script>
+    var server = "https://eonet.sci.gsfc.nasa.gov/api/v3/events/geojson";
+
+    var zoom = 9
+    // First, show the list of events
+    $( document ).ready(function() {
+        $.getJSON( server )
+            .done(function( data ) {
+
+                for(i = 0; i < data.features.length; i++){
+
+                    if(data.features[i].properties.categories[0].id == 'wildfires'){
+                        console.log(data.features[i])
+                        lat = data.features[i].geometry.coordinates[1]
+                        lon = data.features[i].geometry.coordinates[0]
+                        console.log(lat,lon)
+
+                        var x = lat2tile(lat, zoom); // eg.lat2tile(34.422, 9);
+                        var y = lon2tile(lon, zoom);
+                        //var bottom_tile = lat2tile(south_edge, zoom);
+                        // var right_tile  = lon2tile(east_edge, zoom);
+                        // var width       = Math.abs(left_tile - right_tile) + 1;
+                        // var height      = Math.abs(top_tile - bottom_tile) + 1;
+
+                        // total tiles
+                        // var total_tiles = width * height; // -> eg. 377
+                        console.log(x,y)
+                        tileUrl = "tile.osm.org/" + zoom + "/" + x + "/" + y + ".png"
+
+                        console.log(x,y,tileUrl)
+
+                    }
+                    
+                }
+                
+            });
+    });
+
+    function lon2tile(lon,zoom) { 
+        lon = Math.abs(lon)
+        return (Math.floor((lon+180)/360*Math.pow(2,zoom))); 
+    }
+    function lat2tile(lat,zoom) { 
+        // lat = Math.abs(lat))
+
+        lat_pi = lat*Math.PI/180
+        lat_tan = Math.tan(lat_pi)
+        lat_cos = 1/Math.cos(lat_pi)
+        log = lat_tan + lat_cos
+        lat_log = Math.log(log)
+
+        pow = 2 * Math.pow(2,zoom)
+        console.log(lat,lat_pi,lat_tan,lat_cos ,lat_log,pow,log)
+
+        return Math.floor((1- lat_log/Math.PI)/ pow);
+    }
+
+
+        
+
+
+
+    function tile2long(x,z) {
+        return (x/Math.pow(2,z)*360-180);
+    }
+    function tile2lat(y,z) {
+        var n=Math.PI-2*Math.PI*y/Math.pow(2,z);
+        return (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));
+    }
+
+
+</script>
+
+</body>
+</html>
