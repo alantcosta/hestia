@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     
 
-    if ($_FILES['imagem']['name'] != ''){
+    
         $uploaddir = '/tmp/';
         $uploadfile = $uploaddir . basename($_FILES['imagem']['name']);
         
@@ -29,15 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "Erro ao enviar os arquivos\n";
         }
-    }
-    
-
-
-
     //print_r($dados);
-
-
-
 }else{
     $lat = -18.35;
     $lon = -49.40;
@@ -105,7 +97,8 @@ $stmt2->bindValue(':distancia', $raio);
 $stmt2->execute();        
 
 
-function http_post($url,$data){	                                                                   
+function http_post($url,$data){	   
+    print_r($data,$url);                                                                   
     $data_string = json_encode($data);  																				 
     $ch = curl_init($url);                                                                      
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
@@ -146,7 +139,7 @@ function http_post($url,$data){
                     <div class="card-body">                         
                         <div class="row">
                             <div class="col-md-2">        
-                            <img src="img/logo.gif" alt="" width="120px">                 
+                            <img src="img/logo-transparente.png" alt="" width="120px">                 
                                 <form  autocomplete="off" action="maps2.php" id="form_maps" name="form_maps" method="POST" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -205,6 +198,8 @@ function http_post($url,$data){
                                             <img src="<?php echo $imgbase64 ?>" width="100%" />
                                         </div>                                    
                                     </div>
+                                    <br>
+                                    <br>
                                 <?php } ?>
                                     
                             </div>
@@ -300,10 +295,8 @@ function http_post($url,$data){
             $desc = 'Foco: '.$row['coord'].'<br>';
             $desc .= 'Coord: '.$row['lat'].' , '.$row['lon'].'<br>';
             $desc .= 'Distancia: '.($row['distancia']/1000).' Km<br>';
-            $desc .= 'Direção: '.'<br>';
-            $desc .= 'Velocidade: '.'<br>';
-            $desc .= 'Temperatura: '.'<br>';
-            $desc .= 'Umidade: '.'<br>';
+            $desc .= 'Direção: 190º'.'<br>';
+            $desc .= 'Velocidade: 10m/h'.'<br>';           
             $desc .= 'Duração: '.$row['dias'].'<br>';
             $desc .= 'Area: '.$row['area'].'km<sup>2</sup>';
         
@@ -323,10 +316,8 @@ function http_post($url,$data){
         $desc = 'Foco: '.$row['coord'].'<br>';
         $desc .= 'Coord: '.$row['lat'].' , '.$row['lon'].'<br>';
         $desc .= 'Distancia: '.($row['distancia']/1000).' Km<br>';
-        $desc .= 'Direção: '.'<br>';
-        $desc .= 'Velocidade: '.'<br>';
-        $desc .= 'Temperatura: '.'<br>';
-        $desc .= 'Umidade: '.'<br>';
+        $desc .= 'Direção: 190º'.'<br>';
+        $desc .= 'Velocidade: 10m/h'.'<br>';     
         $desc .= 'Duração: '.$row['dias'].'<br>';
         $desc .= 'Area: '.$row['area'].'km<sup>2</sup>';
     
